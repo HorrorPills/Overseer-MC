@@ -1,0 +1,74 @@
+name: Overseer
+options:
+  bundleIdPrefix: com.overseer
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    MARKETING_VERSION: 1.0
+    CURRENT_PROJECT_VERSION: 1
+    ENABLE_HARDENED_RUNTIME: YES
+    # Apple Silicon only dev machine; Citadel's SPM dependency graph
+    # (swift-crypto's BoringSSL shims etc.) isn't reliably building an
+    # x86_64 slice here, and this app was never distributed as a
+    # universal binary anyway.
+    ARCHS: arm64
+    ONLY_ACTIVE_ARCH: YES
+
+packages:
+  Citadel:
+    url: https://github.com/orlandos-nl/Citadel.git
+    from: 0.1.0
+
+targets:
+  Overseer:
+    type: application
+    platform: macOS
+    sources:
+      - path: Overseer
+    resources:
+      - path: Overseer/Resources/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_NAME: Overseer
+        PRODUCT_BUNDLE_IDENTIFIER: com.overseer.app
+        ENABLE_TESTABILITY: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Overseer
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        INFOPLIST_KEY_NSPrincipalClass: NSApplication
+        GENERATE_INFOPLIST_FILE: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+    entitlements:
+      path: Overseer/Resources/Overseer.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.files.user-selected.read-write: true
+    info:
+      path: Overseer/Resources/Info.plist
+      properties:
+        LSUIElement: false
+        LSMinimumSystemVersion: "14.0"
+    dependencies:
+      - package: Citadel
+
+  OverseerTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: OverseerTests
+    settings:
+      base:
+        PRODUCT_NAME: OverseerTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.overseer.tests
+        GENERATE_INFOPLIST_FILE: YES
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+    dependencies:
+      - target: Overseer
