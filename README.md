@@ -64,4 +64,4 @@ If you turn it on, it will automatically download new Minecraft snapshots, uploa
 
 ## License
 
-No license file is included yet. Add one (MIT, for example) before treating this as open source others can freely reuse.
+MIT License
